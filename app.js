@@ -20,6 +20,33 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 
+// Health Check
+var health = require('@cloudnative/health-connect');
+let healthCheck = new health.HealthChecker();
+
+// Liveness Probe
+const livePromise = () => new Promise((resolve, _reject) => {
+  const appFunctioning = true;
+  // You should change the above to a task to determine if your app is functioning correctly
+  if (appFunctioning) {
+    resolve();
+  } else {
+    reject(new Error("App is not functioning correctly"));
+  }
+});
+let liveCheck = new health.LivenessCheck("LivenessCheck", livePromise);
+healthCheck.registerLivenessCheck(liveCheck);
+
+app.use('/live', health.LivenessEndpoint(healthCheck))
+
+// Readiness Probe
+let readyCheck = new health.PingCheck("example.com");
+healthCheck.registerReadinessCheck(readyCheck);
+
+app.use('/ready', health.ReadinessEndpoint(healthCheck))
+
+app.use('/health', health.HealthEndpoint(healthCheck))
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
