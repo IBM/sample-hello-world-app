@@ -5,7 +5,7 @@ WORKDIR /app
 ADD . /app
 
 USER root
-RUN npm install
+RUN npm run build
 
 LABEL name="ibm/sample-temperature-converter-app" \
       vendor="IBM" \
