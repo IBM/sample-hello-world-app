@@ -1,5 +1,5 @@
 # Temperature converter application
-This is a sample application that converts temperatures from one scale to another.
+This is a sample application that converts temperatures from one scale to another
 
 ## Sample Output
 
